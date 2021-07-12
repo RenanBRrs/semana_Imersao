@@ -13,3 +13,7 @@ Rodar o projeto react
 React Router Dom, gerenciamento de rotas
 
 ## npm install react-router-dom
+
+Styled Components
+
+## npm install --save styled-components

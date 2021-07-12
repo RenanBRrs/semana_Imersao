@@ -1,4 +1,16 @@
 import { React, useEffect, useState } from 'react';
+import {
+  Container,
+  ConteudoTitulo,
+  Titulo,
+  ButtomSucess,
+  BotaoAcao,
+  AnteriorProximo,
+  ButtomPrimary,
+  Table,
+  TextDanger,
+  TextSucess
+} from '../styles/custom_adm';
 
 export const Home = () => {
   var dataAtual = new Date();
@@ -78,22 +90,29 @@ export const Home = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Listar Situação financeira</h1>
-      <p>Ano atual:{dataView.ano}</p>
-      <p>Mes atual:{dataView.mes}</p>
-      <button type='button' onClick={() => anterior()}>
-        Anterior
-      </button>
-      <button type='button' onClick={() => proximo()}>
-        Proximo
-      </button>
-      <table>
+    <Container>
+      <ConteudoTitulo>
+        <Titulo>Listar Situação financeira</Titulo>
+        <BotaoAcao>
+          <ButtomSucess>Cadastrar</ButtomSucess>
+        </BotaoAcao>
+      </ConteudoTitulo>
+      <AnteriorProximo>
+        <ButtomPrimary type='button' onClick={() => anterior()}>
+          Anterior
+        </ButtomPrimary>
+        <span>{dataView.mes + '/' + dataView.ano}</span>
+        <ButtomPrimary type='button' onClick={() => proximo()}>
+          Proximo
+        </ButtomPrimary>
+      </AnteriorProximo>
+      <Table>
         <thead>
           <tr>
             <th>ID {data.id} </th>
             <th>Nome {data.nome} </th>
             <th>Tipo {data.tipo} </th>
+            <th>Situação {data.situacao} </th>
             <th>Valor {data.valor} </th>
           </tr>
         </thead>
@@ -102,9 +121,15 @@ export const Home = () => {
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.nome}</td>
-              <td>{item.tipo === 1 ? <p>Pagamento</p> : <p>Recebido</p>}</td>
-              <td>{item.valor}</td>
+              <td>
+                {item.tipo === 1 ? (
+                  <TextDanger>Pagamento</TextDanger>
+                ) : (
+                  <TextSucess>Recebido</TextSucess>
+                )}
+              </td>
               <td>{item.situacao}</td>
+              <td>{item.valor}</td>
             </tr>
           ))}
         </tbody>
@@ -113,11 +138,11 @@ export const Home = () => {
             <td>Total</td>
             <td></td>
             <td></td>
-            <td>400</td>
             <td></td>
+            <td>400</td>
           </tr>
         </tfoot>
-      </table>
-    </div>
+      </Table>
+    </Container>
   );
 };
