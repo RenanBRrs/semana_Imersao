@@ -24,7 +24,12 @@ const Lancamentos = db.define('lancamentos', {
     type: Sequelize.INTEGER,
     allowNull: true,
   },
+  dataPagamento: {
+    type: Sequelize.DATE,
+    allowNull: false,
+  },
 });
 Lancamentos.sync();
+// Lancamentos.sync({ alter: true });
 
 module.exports = Lancamentos;
