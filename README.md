@@ -19,3 +19,7 @@ Instalar Sequelize
 Instalar o drive do BD
 
 ## npm install --save mysql2
+
+Instalar CORS(Permite acesso API)
+
+## npm install --save cors

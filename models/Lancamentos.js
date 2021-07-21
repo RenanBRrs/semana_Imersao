@@ -19,7 +19,7 @@ const Lancamentos = db.define('lancamentos', {
   tipo: {
     type: Sequelize.INTEGER,
     allowNull: false,
-  }, //TIPO 1: PAGO / TIPO 2: PENDENTE
+  }, //TIPO 1: PAGO / TIPO 2: PENDENTE / TIPO 3: RECEBIDO
   situacao: {
     type: Sequelize.INTEGER,
     allowNull: true,

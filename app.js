@@ -1,12 +1,24 @@
 const express = require('express');
 const { findAll } = require('./models/Lancamentos');
-const app = express();
 const { Op } = require('sequelize');
+const cors = require('cors');
+const app = express();
 
 // const db = require('./models/db');
 const Lancamentos = require('./models/Lancamentos');
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+  res.header(
+    'Access-Control-Allow-Headers',
+    "X-PINGOTHER,Content-Type, 'Authorization",
+  );
+  app.use(cors());
+  next();
+});
 
 app.get('/listar/:mes/:ano', async (req, res) => {
   var mes = new Number(req.params.mes);
