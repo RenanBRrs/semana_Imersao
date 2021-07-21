@@ -17,3 +17,10 @@ React Router Dom, gerenciamento de rotas
 Styled Components
 
 ## npm install --save styled-components
+
+Realizar chamadas para API
+
+## npm install --save axios
+
+Manipular datas
+## npm install --save moment

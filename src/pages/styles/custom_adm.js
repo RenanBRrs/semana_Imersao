@@ -70,3 +70,19 @@ export const TextDanger = styled.span`
 export const TextSucess = styled.span`
   color: #24c14a;
 `;
+export const AlertDanger = styled.p`
+  background-color: #f8d7da;
+  color: #842029;
+  margin: 10px 0;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+  padding: 7px;
+`;
+export const AlertSucess = styled.p`
+  background-color: #d1e7dd;
+  color: #0f5132;
+  margin: 10px 0;
+  border: 1px solid #badbcc;
+  border-radius: 4px;
+  padding: 7px;
+`;

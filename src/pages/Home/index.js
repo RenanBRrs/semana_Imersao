@@ -1,4 +1,5 @@
 import { React, useEffect, useState } from 'react';
+import moment from 'moment';
 import {
   Container,
   ConteudoTitulo,
@@ -9,8 +10,12 @@ import {
   ButtomPrimary,
   Table,
   TextDanger,
-  TextSucess
+  TextSucess,
+  AlertDanger,
+  AlertSucess,
 } from '../styles/custom_adm';
+
+import api from '../../config/configAPI';
 
 export const Home = () => {
   var dataAtual = new Date();
@@ -18,71 +23,85 @@ export const Home = () => {
   var mes = dataAtual.getMonth() + 1;
 
   const [data, setData] = useState([]);
+  const [saldo, setSaldo] = useState();
+  const [valorPagamentos, setvalorPagagamentos] = useState();
+  const [valorRecebido, setvalorRecebido] = useState();
   const [dataView, setDataView] = useState({
     ano,
     mes,
   });
+  const [status, setStatus] = useState({
+    type: '',
+    mensagem: '',
+  });
 
   const anterior = async () => {
     if (dataView.mes === 1) {
+      ano = dataView.ano - 1;
+      mes = 12;
       setDataView({
-        ano: dataView.ano - 1,
-        mes: 12,
+        ano,
+        mes,
       });
+      listarExtrato(mes, ano);
     } else {
+      ano = dataView.ano;
+      mes = dataView.mes - 1;
       setDataView({
-        ano: dataView.ano,
-        mes: dataView.mes - 1,
+        ano,
+        mes,
       });
+      listarExtrato(mes, ano);
     }
   };
   const proximo = async () => {
     if (dataView.mes === 12) {
+      ano = dataView.ano + 1;
+      mes = 1;
       setDataView({
-        ano: dataView.ano + 1,
-        mes: 1,
+        ano,
+        mes,
       });
+      listarExtrato(mes, ano);
     } else {
+      ano = dataView.ano;
+      mes = dataView.mes + 1;
       setDataView({
-        ano: dataView.ano,
-        mes: dataView.mes + 1,
+        ano,
+        mes,
       });
+      listarExtrato(mes, ano);
     }
   };
 
-  const listarExtrato = async (e) => {
-    var valores = [
-      {
-        id: 3,
-        nome: 'Agua',
-        valor: 50.0,
-        tipo: 1,
-        situacao: 'Pago',
-      },
-      {
-        id: 2,
-        nome: 'Luz',
-        valor: 120.0,
-        tipo: 1,
-        situacao: 'Pago',
-      },
-      {
-        id: 1,
-        nome: 'Net',
-        valor: 95.0,
-        tipo: 1,
-        situacao: 'Pendente',
-      },
-      {
-        id: 0,
-        nome: 'Salario',
-        valor: 1250.0,
-        tipo: 2,
-        situacao: '',
-      },
-    ];
-    setData(valores);
-    console.log(data);
+  const listarExtrato = async (mes, ano) => {
+    if (mes === undefined && ano === undefined) {
+      var dataAtual = new Date();
+      ano = dataAtual.getFullYear();
+      mes = dataAtual.getMonth() + 1;
+    }
+
+    await api
+      .get('listar/' + mes + '/' + ano)
+      .then((response) => {
+        setData(response.data.lancamentos);
+        setSaldo(response.data.saldo);
+        setvalorRecebido(response.data.valorRecebido);
+        setvalorPagagamentos(response.data.valorPagamentos);
+      })
+      .catch((err) => {
+        if (err.response) {
+          setStatus({
+            type: 'erro',
+            mensagem: err.response.data.mensagem,
+          });
+        } else {
+          setStatus({
+            type: 'erro',
+            mensagem: 'Erro: Tente mais tarde',
+          });
+        }
+      });
   };
 
   useEffect(() => {
@@ -97,6 +116,16 @@ export const Home = () => {
           <ButtomSucess>Cadastrar</ButtomSucess>
         </BotaoAcao>
       </ConteudoTitulo>
+      {status.type === 'erro' ? (
+        <AlertDanger>{status.mensagem}</AlertDanger>
+      ) : (
+        ''
+      )}
+      {status.type === 'sucess' ? (
+        <AlertSucess>{status.mensagem}</AlertSucess>
+      ) : (
+        ''
+      )}
       <AnteriorProximo>
         <ButtomPrimary type='button' onClick={() => anterior()}>
           Anterior
@@ -106,14 +135,16 @@ export const Home = () => {
           Proximo
         </ButtomPrimary>
       </AnteriorProximo>
+
       <Table>
         <thead>
           <tr>
-            <th>ID {data.id} </th>
-            <th>Nome {data.nome} </th>
-            <th>Tipo {data.tipo} </th>
-            <th>Situação {data.situacao} </th>
-            <th>Valor {data.valor} </th>
+            <th>ID </th>
+            <th>Nome </th>
+            <th>Tipo </th>
+            <th>Situação</th>
+            <th>Data </th>
+            <th>Valor </th>
           </tr>
         </thead>
         <tbody>
@@ -123,23 +154,65 @@ export const Home = () => {
               <td>{item.nome}</td>
               <td>
                 {item.tipo === 1 ? (
-                  <TextDanger>Pagamento</TextDanger>
+                  <TextDanger>Paguei</TextDanger>
                 ) : (
-                  <TextSucess>Recebido</TextSucess>
+                  <TextSucess>Recebi</TextSucess>
                 )}
               </td>
-              <td>{item.situacao}</td>
-              <td>{item.valor}</td>
+              <td>
+                {item.situacao === 1 ? <TextSucess>Pago</TextSucess> : ''}
+                {item.situacao === 2 ? <TextDanger>Pendente</TextDanger> : ''}
+                {item.situacao === 3 ? <TextSucess>Recebido</TextSucess> : ''}
+              </td>
+              <td>{moment(item.dataPagamento).format('DD/MM/YYYY')}</td>
+              <td>
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(item.valor)}
+              </td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr>
-            <td>Total</td>
+            <td>Saldo</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>400</td>
+            <td></td>
+            <td>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(saldo)}
+            </td>
+          </tr>
+          <tr>
+            <td>Valor Pago</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(valorPagamentos)}
+            </td>
+          </tr>
+          <tr>
+            <td>Valor Recebido</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(valorRecebido)}
+            </td>
           </tr>
         </tfoot>
       </Table>
