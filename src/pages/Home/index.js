@@ -1,4 +1,5 @@
 import { React, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import {
   Container,
@@ -113,14 +114,12 @@ export const Home = () => {
       <ConteudoTitulo>
         <Titulo>Listar Situação financeira</Titulo>
         <BotaoAcao>
-          <ButtomSucess>Cadastrar</ButtomSucess>
+          <ButtomSucess>
+            <a href='/cadastrar'>Cadastrar</a>
+          </ButtomSucess>
         </BotaoAcao>
       </ConteudoTitulo>
-      {status.type === 'erro' ? (
-        <AlertDanger>{status.mensagem}</AlertDanger>
-      ) : (
-        ''
-      )}
+      {}
       {status.type === 'sucess' ? (
         <AlertSucess>{status.mensagem}</AlertSucess>
       ) : (
@@ -175,8 +174,9 @@ export const Home = () => {
           ))}
         </tbody>
         <tfoot>
+          <br />
           <tr>
-            <td>Saldo</td>
+            <td>Valor Recebido</td>
             <td></td>
             <td></td>
             <td></td>
@@ -185,7 +185,7 @@ export const Home = () => {
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
-              }).format(saldo)}
+              }).format(valorRecebido)}
             </td>
           </tr>
           <tr>
@@ -202,7 +202,7 @@ export const Home = () => {
             </td>
           </tr>
           <tr>
-            <td>Valor Recebido</td>
+            <td>Saldo</td>
             <td></td>
             <td></td>
             <td></td>
@@ -211,7 +211,7 @@ export const Home = () => {
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
-              }).format(valorRecebido)}
+              }).format(saldo)}
             </td>
           </tr>
         </tfoot>
